@@ -59,8 +59,6 @@ def CompareIndexes(old_index_hash, new_index_hash)
 end
 
 def CompareIndexFiles(old_index_file, new_index_file)
-  puts "CompareIndex called with arguments: #{new_index_file} & #{old_index_file}"
-
   # If either the old, or new index files provided aren't valid files, log and exit.
   (puts "The provided old index file '#{old_index_file}' is not a valid file."; exit) if !File.file?(old_index_file)
   (puts "The provided new index file '#{new_index_file}' is not a valid file."; exit) if !File.file?(new_index_file)
@@ -82,8 +80,6 @@ def ReevaluateIndex(index_file)
 end 
 
 def BuildIndex(directory, out_index_file)
-  puts "BuildIndex called with arguments: #{directory} & #{out_index_file}"
-
   # Exit if the directory provided isn't valid.
   (puts "The provided directory '#{directory}' is not a valid directory."; exit) if !File.directory?(directory)
 
