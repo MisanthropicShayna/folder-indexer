@@ -40,14 +40,14 @@ def CompareIndexes(old_index_hash, new_index_hash)
     puts "- (#{hexdigest})\n\n"
   end
 
-  puts "#{'-'*132}\n" if new_files.size > 0 && missing_files.size > 0
+  puts "#{'-'*132}\n\n" if new_files.size > 0
 
   missing_files.each do |file, hexdigest|
     puts "#{'FILE ABSENT'.ljust(15, '.')} #{file}"
     puts "- (#{hexdigest})\n\n"
   end
   
-  puts "#{'-'*132}\n\n"
+  puts "#{'-'*132}\n\n" if missing_files.size > 0
 
   modified_files.each do |file, hexdigests|
     puts "#{'FILE MODIFIED'.ljust(15, '.')} #{file}"
@@ -55,7 +55,7 @@ def CompareIndexes(old_index_hash, new_index_hash)
     puts "- NEW: (#{hexdigests['new']})\n\n"
   end
 
-  puts "#{'-'*132}\n" if modified_files.size > 0
+  puts "#{'-'*132}\n\n" if modified_files.size > 0
 end
 
 def CompareIndexFiles(old_index_file, new_index_file)
