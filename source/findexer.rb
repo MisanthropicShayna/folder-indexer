@@ -1,6 +1,5 @@
 require 'digest'
 require 'json'
-
 class File
   def each_chunk(chunk_size = 1024*1024)
     yield read(chunk_size) until eof?
@@ -83,7 +82,14 @@ def BuildIndex(directory, out_index_file)
   # Exit if the directory provided isn't valid.
   (puts "The provided directory '#{directory}' is not a valid directory."; exit) if !File.directory?(directory)
 
+  puts 'Scanning files..'
+
   directory_files = Dir.glob("#{directory}/**/*", File::FNM_DOTMATCH).select { |entry| File.file? entry }
+
+  puts "#{directory_files.size} Files queued for hashing.."
+
+  last_file_path_size = 1
+  files_hashed = 1.0
 
   files_hexdigest_table = (directory_files.map do |file|
     sha256_digest_object = Digest::SHA2.new(256)
@@ -92,13 +98,22 @@ def BuildIndex(directory, out_index_file)
       sha256_digest_object.update(chunk)
     end
 
+    files_hashed += 1
+
+    print "....#{((files_hashed.to_f / directory_files.size.to_f) * 100.0).round(3)}% --> #{File.basename(file)}".ljust(last_file_path_size, ' ')
+    print "\r"
+
+    last_file_path_size = file.size
+
     [file, sha256_digest_object.hexdigest!]
   end).to_h
+
+  puts "\nChecksumming directory.."
 
   directory_hexdigest = (files_hexdigest_table.map{|file, hexdigest| hexdigest}.sort.inject(Digest::SHA2.new(512)) do |sha512_digest_object, kvpair|
     sha512_digest_object.update(kvpair[1])
   end).hexdigest
-
+  
   json_payload = JSON.pretty_generate({
     'directory' => directory,
     'directory_hexdigest' => directory_hexdigest,
